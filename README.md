@@ -8,10 +8,11 @@ Pensado para uso no celular durante a viagem, nas paradas: o servidor sobe em `0
 
 ## Funcionalidades
 
-- **Registro ponto a ponto** — cada parada guarda descrição, KM do odômetro, horário e (opcionalmente) litros abastecidos e valor gasto.
+- **App instalável (PWA)** — instala na tela inicial do celular e **abre offline** (o app shell é cacheado por um service worker). _O registro totalmente offline com sincronização é a próxima fase._
+- **Registro ponto a ponto** — cada parada guarda descrição, KM do odômetro, data+hora (capturada automaticamente do aparelho, editável), cidade/UF e, opcionalmente, litros abastecidos e valor gasto.
 - **Cálculo automático de resumo** ao finalizar a viagem:
   - Distância total (KM final − KM inicial)
-  - Tempo total (com tratamento de virada de meia-noite)
+  - Tempo total (a partir da data+hora dos pontos; funciona em viagens multi-dia)
   - Velocidade média (km/h)
   - Total de litros abastecidos e total gasto (R$)
   - Consumo médio (km/L)
@@ -84,23 +85,27 @@ O app roda em `host='0.0.0.0'`, então basta descobrir o IP local da máquina (e
 
 ```
 TripTrack/
-├── app.py              # Backend Flask: modelos, rotas e cálculos
-├── requirements.txt    # Dependências Python
-├── trips.db            # Banco SQLite (gerado em runtime, fora do Git)
+├── app.py                    # Backend Flask: modelos, rotas e cálculos
+├── requirements.txt          # Dependências Python
+├── trips.db                  # Banco SQLite (gerado em runtime, fora do Git)
 ├── templates/
-│   ├── index.html      # Página principal (registro de viagem)
-│   └── historico.html  # Página de histórico
+│   ├── index.html            # Página principal (registro de viagem)
+│   └── historico.html        # Página de histórico
 ├── static/
-│   ├── script.js       # Lógica da tela de registro
-│   ├── historico.js    # Lógica da tela de histórico
-│   └── style.css       # Estilos
+│   ├── script.js             # Lógica da tela de registro
+│   ├── historico.js          # Lógica da tela de histórico
+│   ├── style.css             # Estilos
+│   ├── sw.js                 # Service worker (PWA / cache do app shell)
+│   ├── manifest.webmanifest  # Web App Manifest
+│   └── icons/                # Ícones do PWA (192, 512, maskable)
 ├── docs/
-│   └── API.md          # Documentação dos endpoints
+│   ├── API.md                # Documentação dos endpoints e modelo de dados
+│   └── ROADMAP.md            # Planejamento, requisitos e roadmap
 ├── .gitignore
 └── LICENSE
 ```
 
-Para detalhes dos endpoints e do modelo de dados, veja [`docs/API.md`](docs/API.md).
+Para detalhes dos endpoints e do modelo de dados, veja [`docs/API.md`](docs/API.md); para o planejamento, [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ---
 

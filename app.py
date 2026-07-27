@@ -1,6 +1,6 @@
 import os
 import uuid
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -90,6 +90,15 @@ class Ponto(db.Model):
 def index():
     # Carrega a página principal
     return render_template('index.html')
+
+@app.route('/sw.js')
+def service_worker():
+    # Servido a partir da raiz para que o escopo do SW seja '/' (controla todo o app)
+    resp = send_from_directory(app.static_folder, 'sw.js')
+    resp.headers['Content-Type'] = 'application/javascript'
+    resp.headers['Service-Worker-Allowed'] = '/'
+    resp.headers['Cache-Control'] = 'no-cache'  # sempre revalida o SW
+    return resp
 
 @app.route('/api/viagens', methods=['GET'])
 def get_viagens():

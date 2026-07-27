@@ -96,10 +96,13 @@ Meta: instalar no celular, **registrar uma viagem completa offline**, sincroniza
   - ✅ `cidade`/`uf` no Ponto (manual)
   - ✅ UUID + `updated_at` (banco de teste recriado; sem dados reais a migrar)
   - ✅ _Bônus:_ corrigido bug onde o `nome` da viagem não era salvo no `finalizar_viagem`
+- **Fase 1.5 — PWA instalável** ✅ _concluída_
+  - ✅ Web App Manifest + ícones (192/512/maskable)
+  - ✅ Service worker (`/sw.js`, escopo `/`) com pré-cache do app shell
+  - ✅ App instala na tela inicial e **abre offline** (chamadas `/api/` seguem online por ora)
 - **Fase 2 — Offline-first do registro**
-  - Manifest + service worker (instalável, shell offline)
   - IndexedDB (escrita local-primeiro) + resumo calculado em JS
-  - Sync automático + endpoint idempotente
+  - Sync automático + endpoint idempotente (upsert por UUID)
   - Editar/remover ponto durante o registro (RF07)
 
 ### v1.1 — Evolução (pilar 3)

@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TripTrack - Registro de Viagem</title>
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.webmanifest">
+    <meta name="theme-color" content="#f97316">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
     <!-- Linka nosso arquivo de estilo -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -115,5 +119,15 @@
     <!-- Linka nosso arquivo JavaScript -->
     <!-- 'defer' garante que o script só rode após o HTML carregar -->
     <script src="/static/script.js" defer></script>
+
+    <!-- Registro do Service Worker (PWA) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .catch((e) => console.error('Falha ao registrar o Service Worker:', e));
+            });
+        }
+    </script>
 </body>
 </html>
