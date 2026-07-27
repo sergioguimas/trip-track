@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Popula o dropdown de "Volta" assim que a página carrega
+    carregarViagensAnteriores();
+
     // --- Event Listeners ---
 
     // Botão: Iniciar Viagem
@@ -212,7 +215,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Preenche a seção de resumo com os dados do backend
     function mostrarResumo(resumo) {
-        resumoConteudo.innerHTML = `
+        const avisoHtml = resumo.aviso
+            ? `<p class="aviso">⚠️ ${resumo.aviso}</p>`
+            : "";
+        resumoConteudo.innerHTML = avisoHtml + `
             <div>
                 <span>Distância Total:</span>
                 <span>${resumo.distancia_total} km</span>
@@ -250,5 +256,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
-
-carregarViagensAnteriores();

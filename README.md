@@ -1,8 +1,8 @@
 # TripTrack 🚗
 
-**Seu diário de bordo digital.** Um web app leve (Flask + SQLite) para registrar viagens de carro ponto a ponto — odômetro, horários e abastecimentos — e calcular automaticamente distância, tempo, velocidade média, consumo (km/L) e custo por quilômetro.
+**Seu diário de bordo digital.** Um web app leve (Flask + SQLite) para registrar viagens de moto ponto a ponto — odômetro, horários e abastecimentos — e calcular automaticamente distância, tempo, velocidade média, consumo (km/L) e custo por quilômetro.
 
-Pensado para uso no celular: o servidor sobe em `0.0.0.0`, então dá para acessar direto do navegador do telefone durante a viagem.
+Pensado para uso no celular durante a viagem, nas paradas: o servidor sobe em `0.0.0.0`, então dá para acessar direto do navegador do telefone.
 
 ---
 

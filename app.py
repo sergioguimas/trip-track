@@ -151,6 +151,9 @@ def finalizar_viagem():
                    "resumo_volta": resumo_volta,
                    "resumo_combinado": resumo_combinado
                })
+           else:
+               # ida_id informado mas inexistente: avisa em vez de ignorar em silêncio
+               resumo_volta['aviso'] = f"Viagem de ida (id {ida_id}) não encontrada; resumo combinado não gerado."
 
         # 5. Retornar o resumo para o frontend
         return jsonify(resumo_volta)

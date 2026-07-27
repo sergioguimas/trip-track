@@ -236,3 +236,14 @@ select:focus {
 
 /* Utilitário para esconder/mostrar */
 .hidden { display: none; }
+
+/* Aviso não-bloqueante (ex.: ida não encontrada) */
+.aviso {
+    background-color: rgba(249, 115, 22, 0.12);
+    border: 1px solid var(--cor-laranja);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 0 0 16px;
+    color: var(--cor-texto);
+    font-size: 0.9rem;
+}
