@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TripTrack - Registro de Viagem</title>
+    <!-- Linka nosso arquivo de estilo -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Cabeçalho -->
+        <header>
+            <h1>TripTrack</h1>
+            <p>Seu diário de bordo digital</p>
+        </header>
+
+        <!-- Seção 1: Iniciar Viagem -->
+        <section id="secao-iniciar" class="card">
+            <h2>Nova Viagem</h2>
+            <div class="form-group">
+                <label for="nome-viagem">Nome da Viagem</label>
+                <input type="text" id="nome-viagem" placeholder="Ex: Téo x Valadares (Ida)">
+                <!-- (NOVO) Opção Nova / Volta -->
+                <div class="form-group">
+                    <label>Tipo de Viagem</label>
+                    <div class="radio-group">
+                        <input type="radio" id="tipo-nova" name="tipo-viagem" value="nova" checked>
+                        <label for="tipo-nova">Nova</label>
+                        <input type="radio" id="tipo-volta" name="tipo-viagem" value="volta">
+                        <label for="tipo-volta">Volta</label>
+                    </div>
+                </div>
+                <!-- (NOVO) Dropdown de viagens de "Volta" -->
+                <div id="bloco-volta" class="form-group hidden">
+                    <label for="select-viagem-volta">Viagem de Ida (para referência)</label>
+                    <select id="select-viagem-volta">
+                        <!-- Opções carregadas pelo JS -->
+                    </select>
+                </div>
+            </div>
+            <button id="btn-iniciar-viagem">Iniciar Viagem</button>
+        </section>
+
+        <!-- Seção 2: Registro (escondida por padrão) -->
+        <section id="secao-registro" class="card hidden">
+            <h2 id="titulo-viagem-atual"></h2>
+            
+            <form id="form-ponto-parada">
+                <h3>Registrar Ponto de Parada</h3>
+                <div class="form-group">
+                    <label for="ponto-descricao">Descrição</label>
+                    <input type="text" id="ponto-descricao" placeholder="Ex: T. Otoni (Início)" required>
+                </div>
+                <!-- (ATUALIZADO) KM e Horário lado a lado -->
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="ponto-km">KM Atual (Odômetro)</label>
+                        <input type="number" id="ponto-km" step="0.1" placeholder="Ex: 12540.5" required>
+                    </div>
+                    <!-- (NOVO) Input de Horário -->
+                    <div class="form-group">
+                        <label for="ponto-horario">Horário (opcional)</label>
+                        <input type="time" id="ponto-horario">
+                    </div>
+                </div>
+
+                <h4>Abastecimento (Opcional)</h4>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="ponto-litros">Litros (L)</label>
+                        <input type="number" id="ponto-litros" step="0.01" placeholder="Ex: 5.2">
+                    </div>
+                    <div class="form-group">
+                        <label for="ponto-valor">Valor (R$)</label>
+                        <input type="number" id="ponto-valor" step="0.01" placeholder="Ex: 29.45">
+                    </div>
+                </div>
+                <button type="submit">Adicionar Ponto</button>
+            </form>
+
+            <!-- Lista de pontos -->
+            <h3>Pontos Registrados</h3>
+            <ul id="lista-pontos">
+                <!-- Pontos serão adicionados aqui pelo JS -->
+            </ul>
+
+            <button id="btn-finalizar-viagem" class="btn-secondary">Finalizar Viagem</button>
+        </section>
+
+        <!-- Seção 3: Resumo (escondida por padrão) -->
+        <section id="secao-resumo" class="card hidden">
+            <h2>Resumo da Viagem</h2>
+            <div id="resumo-conteudo">
+                <!-- Resumo será preenchido pelo JS -->
+            </div>
+            <button id="btn-nova-viagem">Registrar Nova Viagem</button>
+        </section>
+
+    </div>
+
+    <!-- Linka nosso arquivo JavaScript -->
+    <!-- 'defer' garante que o script só rode após o HTML carregar -->
+    <script src="/static/script.js" defer></script>
+</body>
+</html>

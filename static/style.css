@@ -1,0 +1,238 @@
+/* --- Configurações Globais --- */
+:root {
+    --cor-preto: #1a1a1a;
+    --cor-cinza-escuro: #2b2b2b;
+    --cor-cinza-claro: #555;
+    --cor-laranja: #f97316; /* Laranja (Tailwind Orange 500) */
+    --cor-laranja-hover: #ea580c; /* Laranja mais escuro */
+    --cor-texto: #f0f0f0;
+    --cor-texto-label: #aaa;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--cor-preto);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    display: grid;
+    gap: 24px;
+}
+
+/* --- Cabeçalho --- */
+header {
+    text-align: center;
+    border-bottom: 2px solid var(--cor-laranja);
+    padding-bottom: 10px;
+}
+
+header h1 {
+    color: var(--cor-laranja);
+    font-size: 2.5rem;
+    margin: 0;
+    /* Simula a "sombra de velocidade" dos 'T's (só no nome) */
+    text-shadow: 2px 2px 8px rgba(249, 115, 22, 0.3);
+}
+
+header p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--cor-texto-label);
+}
+
+/* --- Cards --- */
+.card {
+    background-color: var(--cor-cinza-escuro);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--cor-cinza-claro);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+h2, h3, h4 {
+    color: var(--cor-laranja);
+    margin-top: 0;
+    border-bottom: 1px solid var(--cor-cinza-claro);
+    padding-bottom: 8px;
+}
+
+h4 {
+    font-size: 0.9rem;
+    color: var(--cor-texto-label);
+    border-bottom: none;
+    margin-bottom: 10px;
+}
+
+/* --- Formulários --- */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--cor-texto-label);
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--cor-preto);
+    border: 1px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    color: var(--cor-texto);
+    font-size: 1rem;
+    box-sizing: border-box; /* Garante que o padding não estoure a largura */
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* --- Botões --- */
+button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: var(--cor-laranja);
+    color: var(--cor-preto);
+}
+
+button:hover {
+    background-color: var(--cor-laranja-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(249, 115, 22, 0.2);
+}
+
+.btn-secondary {
+    background-color: var(--cor-cinza-claro);
+    color: var(--cor-texto);
+}
+
+.btn-secondary:hover {
+    background-color: #777;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* --- Lista de Pontos --- */
+#lista-pontos {
+    list-style: none;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#lista-pontos li {
+    background-color: var(--cor-preto);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 4px solid var(--cor-laranja);
+    font-size: 0.95rem;
+}
+
+#lista-pontos li strong {
+    color: var(--cor-laranja);
+    font-size: 1.05rem;
+}
+
+#lista-pontos li .abastecimento {
+    font-size: 0.85rem;
+    color: #4ade80; /* Verde */
+    display: block;
+    margin-top: 4px;
+}
+
+/* --- Resumo --- */
+#resumo-conteudo div {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--cor-cinza-claro);
+}
+
+#resumo-conteudo div:last-child {
+    border-bottom: none;
+}
+
+#resumo-conteudo span:first-child {
+    color: var(--cor-texto-label);
+}
+
+#resumo-conteudo span:last-child {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--cor-laranja);
+}
+
+/* --- Utilitários --- */
+.hidden {
+    display: none;
+}
+
+/* Estilos para inputs, selects e time */
+input[type="time"],
+select {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--cor-preto);
+    border: 1px solid var(--cor-cinza-claro);
+    border-radius: 8px;
+    color: var(--cor-texto);
+    font-size: 1rem;
+    box-sizing: border-box; 
+    font-family: inherit;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+input[type="time"] { color-scheme: dark; }
+
+/* Seta para o <select> */
+select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="%23aaa" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m6 8 4 4 4-4"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 1.25em;
+    padding-right: 2.5em; 
+}
+
+input[type="time"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--cor-laranja);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3);
+}
+
+/* Estilo para os botões Radio (Nova/Volta) */
+.radio-group { display: flex; border: 1px solid var(--cor-cinza-claro); border-radius: 8px; overflow: hidden; }
+.radio-group input[type="radio"] { display: none; }
+.radio-group label { flex: 1; text-align: center; padding: 12px; margin: 0; color: var(--cor-texto-label); cursor: pointer; background-color: var(--cor-preto); transition: all 0.2s ease; }
+.radio-group input[type="radio"]:checked + label { background-color: var(--cor-laranja); color: var(--cor-preto); font-weight: bold; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+
+/* Utilitário para esconder/mostrar */
+.hidden { display: none; }
