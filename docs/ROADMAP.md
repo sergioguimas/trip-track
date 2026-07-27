@@ -26,8 +26,8 @@ Uma **Viagem** é uma sequência ordenada de **Pontos**: o primeiro é a saída 
 | # | Requisito | Pilar | Status |
 |---|-----------|-------|--------|
 | RF01 | Registrar viagem com nome e pontos ordenados (saída → paradas → chegada) | 1 | ✅ existe |
-| RF02 | Cada ponto: descrição, KM, data+hora, cidade/UF, litros e valor (opcionais) | 1/2 | 🟡 estender |
-| RF03 | Capturar automaticamente a data+hora do dispositivo a cada ponto (editável) | 1 | 🟡 parcial |
+| RF02 | Cada ponto: descrição, KM, data+hora, cidade/UF, litros e valor (opcionais) | 1/2 | ✅ feito |
+| RF03 | Capturar automaticamente a data+hora do dispositivo a cada ponto (editável) | 1 | ✅ feito |
 | RF04 | Calcular resumo (distância, tempo, vel. média, litros, gasto, km/L, R$/km) | 1 | ✅ existe |
 | RF05 | Viagem de "Volta" vinculada a uma "Ida" com resumo combinado | 1 | ✅ existe |
 | RF06 | Registrar viagem completa **offline** e sincronizar ao voltar a conexão | — | ❌ v1 |
@@ -76,8 +76,8 @@ Uma **Viagem** é uma sequência ordenada de **Pontos**: o primeiro é a saída 
 ### Riscos / decisões em aberto
 
 - Duplicação da lógica de cálculo (JS + Python): mitigar mantendo o servidor autoritativo e o client como provisório.
-- IndexedDB cru vs lib (`idb`/`Dexie`): decidir na Fase 2.
-- Estratégia de migration dos dados de teste atuais (sem data): definir placeholder ou descartar.
+- IndexedDB cru vs lib (`idb`/`Dexie`): decidir na Fase 2 (offline).
+- ~~Estratégia de migration dos dados de teste~~ → **resolvido:** dados eram descartáveis, banco recriado do zero. Adotar uma ferramenta de migration (ex.: Flask-Migrate) fica para antes de existir dado real a preservar (fase de produtização).
 
 ---
 
@@ -86,15 +86,16 @@ Uma **Viagem** é uma sequência ordenada de **Pontos**: o primeiro é a saída 
 ### v1 — "Usável na estrada" (MVP)
 Meta: instalar no celular, **registrar uma viagem completa offline**, sincronizar sozinho ao voltar o sinal, ver resumo e histórico.
 
-- **Fase 0 — Higiene**
-  - Corrigir bug do dropdown de "Volta" (`static/script.js:254` — chamada fora do escopo do `DOMContentLoaded`)
-  - Tratar `ida_id` inválido com aviso (hoje é ignorado em silêncio)
-  - Corrigir README (moto/veículo, não carro)
-- **Fase 1 — Fundação de dados**
-  - `data_inicio`/`data_fim` na Viagem
-  - `datahora` (data+hora) no Ponto + captura automática do dispositivo
-  - `cidade`/`uf` no Ponto (manual)
-  - UUID + `updated_at` + migration dos dados existentes
+- **Fase 0 — Higiene** ✅ _concluída_
+  - ✅ Corrigir bug do dropdown de "Volta" (chamada fora do escopo do `DOMContentLoaded`)
+  - ✅ Tratar `ida_id` inválido com aviso (antes era ignorado em silêncio)
+  - ✅ Corrigir README (moto, não carro)
+- **Fase 1 — Fundação de dados** ✅ _concluída_
+  - ✅ `data_inicio`/`data_fim` na Viagem
+  - ✅ `datahora` (data+hora) no Ponto + captura automática do dispositivo
+  - ✅ `cidade`/`uf` no Ponto (manual)
+  - ✅ UUID + `updated_at` (banco de teste recriado; sem dados reais a migrar)
+  - ✅ _Bônus:_ corrigido bug onde o `nome` da viagem não era salvo no `finalizar_viagem`
 - **Fase 2 — Offline-first do registro**
   - Manifest + service worker (instalável, shell offline)
   - IndexedDB (escrita local-primeiro) + resumo calculado em JS

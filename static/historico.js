@@ -27,9 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Formata os valores para exibição
                 const gastoTotal = (viagem.total_gasto_rs || 0).toFixed(2);
                 const custoKm = (viagem.custo_medio_rskm || 0).toFixed(2);
-                
+
+                // Data da viagem (a partir de data_inicio, se existir)
+                const dataFmt = viagem.data_inicio
+                    ? new Date(viagem.data_inicio).toLocaleDateString('pt-BR')
+                    : "";
+                const dataHtml = dataFmt ? `<p class="trip-data">${dataFmt}</p>` : "";
+
                 card.innerHTML = `
                     <h3>${viagem.nome}</h3>
+                    ${dataHtml}
                     <div class="resumo-dados">
                         <div><span>Distância Total:</span><span>${viagem.distancia_total} km</span></div>
                         <div><span>Tempo Total:</span><span>${viagem.tempo_total_horas} horas</span></div>

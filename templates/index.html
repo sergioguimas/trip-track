@@ -53,16 +53,28 @@
                     <label for="ponto-descricao">Descrição</label>
                     <input type="text" id="ponto-descricao" placeholder="Ex: T. Otoni (Início)" required>
                 </div>
-                <!-- (ATUALIZADO) KM e Horário lado a lado -->
+                <!-- KM e Data+Hora lado a lado -->
                 <div class="grid-2">
                     <div class="form-group">
                         <label for="ponto-km">KM Atual (Odômetro)</label>
                         <input type="number" id="ponto-km" step="0.1" placeholder="Ex: 12540.5" required>
                     </div>
-                    <!-- (NOVO) Input de Horário -->
+                    <!-- Data + hora completas (preenchidas automaticamente com o relógio do aparelho) -->
                     <div class="form-group">
-                        <label for="ponto-horario">Horário (opcional)</label>
-                        <input type="time" id="ponto-horario">
+                        <label for="ponto-datahora">Data e hora</label>
+                        <input type="datetime-local" id="ponto-datahora">
+                    </div>
+                </div>
+
+                <!-- Cidade / UF (para o databook) -->
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="ponto-cidade">Cidade (opcional)</label>
+                        <input type="text" id="ponto-cidade" placeholder="Ex: Gov. Valadares">
+                    </div>
+                    <div class="form-group">
+                        <label for="ponto-uf">UF (opcional)</label>
+                        <input type="text" id="ponto-uf" maxlength="2" placeholder="Ex: MG">
                     </div>
                 </div>
 

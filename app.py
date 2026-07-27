@@ -1,7 +1,14 @@
 import os
+import uuid
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
+
+def gerar_uuid():
+    """ID gerado no servidor. Como o cliente também poderá gerar o UUID
+    (registro offline), a sincronização vira um upsert idempotente por id."""
+    return str(uuid.uuid4())
 
 # --- Configuração do App e DB ---
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -20,9 +27,13 @@ db = SQLAlchemy(app)
 # --- Modelos do Banco de Dados ---
 
 class Viagem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=gerar_uuid)
     nome = db.Column(db.String(200), nullable=False)
-    
+
+    # Janela temporal da viagem (derivada do primeiro e do último ponto)
+    data_inicio = db.Column(db.DateTime)
+    data_fim = db.Column(db.DateTime)
+
     # Dados do Resumo
     distancia_total = db.Column(db.Float)
     tempo_total_horas = db.Column(db.Float)
@@ -31,7 +42,10 @@ class Viagem(db.Model):
     total_gasto_rs = db.Column(db.Float)
     consumo_medio_kml = db.Column(db.Float)
     custo_medio_rskm = db.Column(db.Float)
-    
+
+    # Controle de sincronização (facilita o sync offline futuro)
+    updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
     # Relacionamento
     pontos = db.relationship('Ponto', backref='viagem', lazy=True, cascade="all, delete-orphan")
 
@@ -46,6 +60,8 @@ class Viagem(db.Model):
         return {
             "id": self.id,
             "nome": self.nome,
+            "data_inicio": self.data_inicio.isoformat() if self.data_inicio else None,
+            "data_fim": self.data_fim.isoformat() if self.data_fim else None,
             "distancia_total": self.distancia_total,
             "tempo_total_horas": self.tempo_total_horas,
             "velocidade_media_kmh": self.velocidade_media_kmh,
@@ -56,15 +72,17 @@ class Viagem(db.Model):
         }
 
 class Ponto(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=gerar_uuid)
     descricao = db.Column(db.String(200), nullable=False)
     km = db.Column(db.Float, nullable=False)
-    horario = db.Column(db.String(5), nullable=False) # "HH:MM"
+    datahora = db.Column(db.DateTime, nullable=False)  # data + hora completas
     litros = db.Column(db.Float)
     valor = db.Column(db.Float)
-    
+    cidade = db.Column(db.String(100))
+    uf = db.Column(db.String(2))
+
     # Chave Estrangeira
-    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=False)
+    viagem_id = db.Column(db.String(36), db.ForeignKey('viagem.id'), nullable=False)
 
 # --- Rotas da Aplicação ---
 
@@ -78,7 +96,7 @@ def get_viagens():
     # (ESTA É A NOVA ROTA)
     # Retorna a lista de viagens anteriores para o dropdown 'Volta'
     try:
-        viagens = Viagem.query.order_by(Viagem.id.desc()).all()
+        viagens = Viagem.query.order_by(Viagem.data_inicio.desc()).all()
         # Retorna uma lista simples de dicionários
         return jsonify([v.to_dict_lista() for v in viagens])
     except Exception as e:
@@ -98,11 +116,18 @@ def finalizar_viagem():
         if len(pontos_data) < 2:
             return jsonify({"erro": "Viagem precisa de pelo menos 2 pontos"}), 400
 
+        # 0. Normaliza a data+hora de cada ponto (ISO 8601 -> datetime)
+        for p_data in pontos_data:
+            p_data['datahora'] = parse_datahora(p_data.get('datahora'))
+
         # 1. Calcular o resumo
         resumo_volta = calcular_resumo(pontos_data)
 
-        # 2. Criar o objeto Viagem com o resumo
+        # 2. Criar o objeto Viagem com o resumo (nome + janela temporal)
         nova_viagem = Viagem(
+            nome=nome_viagem,
+            data_inicio=pontos_data[0]['datahora'],
+            data_fim=pontos_data[-1]['datahora'],
             **resumo_volta
         )
 
@@ -111,9 +136,11 @@ def finalizar_viagem():
             novo_ponto = Ponto(
                 descricao=p_data['descricao'],
                 km=p_data['km'],
-                horario=p_data['horario'],
+                datahora=p_data['datahora'],
                 litros=p_data.get('litros', 0),
                 valor=p_data.get('valor', 0),
+                cidade=(p_data.get('cidade') or None),
+                uf=(p_data.get('uf') or None),
                 viagem=nova_viagem # Associa o ponto à viagem
             )
             db.session.add(novo_ponto)
@@ -173,32 +200,35 @@ def historico():
 def get_historico_viagens():
     """ (NOVA API) Retorna TODAS as viagens com resumos completos """
     try:
-        viagens = Viagem.query.order_by(Viagem.id.desc()).all()
+        viagens = Viagem.query.order_by(Viagem.data_inicio.desc()).all()
         # Usa o novo método 'to_dict_completo'
         return jsonify([v.to_dict_completo() for v in viagens])
     except Exception as e:
         print(f"Erro ao buscar histórico: {e}")
         return jsonify({"erro": str(e)}), 500    
     
+# --- Helpers ---
+def parse_datahora(valor):
+    """Converte a data+hora recebida do frontend (ISO 8601, ex.: '2026-07-27T14:30')
+    em datetime. Se vier vazia, usa o horário atual do servidor como fallback."""
+    if not valor:
+        return datetime.now()
+    return datetime.fromisoformat(valor)
+
+
 # --- Função de Cálculo ---
 def calcular_resumo(pontos):
-    
+    # 'pontos' já vem com 'datahora' como objeto datetime (ver finalizar_viagem)
     km_inicial = pontos[0]['km']
     km_final = pontos[-1]['km']
     distancia_total = round(km_final - km_inicial, 2)
 
-    formato_hora = '%H:%M'
-    tempo_inicial_str = pontos[0]['horario']
-    tempo_final_str = pontos[-1]['horario']
-
-    tempo_inicial = datetime.strptime(tempo_inicial_str, formato_hora)
-    tempo_final = datetime.strptime(tempo_final_str, formato_hora)
-    duracao = tempo_final - tempo_inicial
-    
+    # Data+hora completas: a duração já lida com viagens multi-dia
+    duracao = pontos[-1]['datahora'] - pontos[0]['datahora']
     tempo_total_horas = duracao.total_seconds() / 3600
 
     if tempo_total_horas < 0:
-        tempo_total_horas += 24 # Cruzou a meia-noite
+        tempo_total_horas = 0  # ordem de pontos inconsistente: evita tempo negativo
 
     total_litros = 0
     total_gasto = 0

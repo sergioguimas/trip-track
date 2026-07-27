@@ -28,6 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const blocoVolta = document.getElementById('bloco-volta');
     const selectViagemVolta = document.getElementById('select-viagem-volta');
     const inputDescricaoPonto = document.getElementById('ponto-descricao');
+    const inputDataHora = document.getElementById('ponto-datahora');
+    const inputCidade = document.getElementById('ponto-cidade');
+    const inputUf = document.getElementById('ponto-uf');
+
+    // Retorna o "agora" local no formato aceito pelo input datetime-local ("YYYY-MM-DDTHH:MM")
+    function agoraLocalISO() {
+        const d = new Date();
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().slice(0, 16);
+    }
+
+    // Preenche o campo de data/hora com o horário atual do aparelho (editável pelo usuário)
+    function preencherDataHoraAgora() {
+        inputDataHora.value = agoraLocalISO();
+    }
 
     async function carregarViagensAnteriores() {
     try {
@@ -74,6 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Limpa o input de descrição do ponto para um novo início
         document.getElementById('ponto-descricao').value = "Início";
+        // Já sugere a data/hora atual para o primeiro ponto
+        preencherDataHoraAgora();
 
         // Alterna as seções visíveis
         secaoIniciar.classList.add('hidden');
@@ -89,37 +106,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const km = parseFloat(document.getElementById('ponto-km').value);
         const litros = parseFloat(document.getElementById('ponto-litros').value) || 0;
         const valor = parseFloat(document.getElementById('ponto-valor').value) || 0;
-
-        // (NOVO) Pega o horário customizado
-        const horarioCustom = document.getElementById('ponto-horario').value;
+        const cidade = inputCidade.value.trim();
+        const uf = inputUf.value.trim().toUpperCase();
 
         if (descricao === "" || isNaN(km)) {
             alert("Descrição e KM são obrigatórios.");
             return;
         }
 
-        // (NOVO) Lógica do Horário
-        let horario;
-        if (horarioCustom) {
-            horario = horarioCustom; // Usa o horário do input "HH:MM"
-        } else {
-            // Se o input estiver vazio, pega o horário atual
-            const agora = new Date();
-            horario = agora.toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+        // Data+hora: usa o valor do campo ou, se vazio, o horário atual do aparelho
+        const datahora = inputDataHora.value || agoraLocalISO();
 
-        const ponto = { descricao, km, horario, litros, valor };
+        const ponto = { descricao, km, datahora, litros, valor, cidade, uf };
         currentTrip.pontos.push(ponto);
         renderizarPontos();
 
-        // Limpa o formulário
+        // Limpa o formulário e já prepara o próximo ponto
         inputDescricaoPonto.value = "";
+        document.getElementById('ponto-km').value = "";
         document.getElementById('ponto-litros').value = "";
         document.getElementById('ponto-valor').value = "";
-        document.getElementById('ponto-horario').value = ""; // (NOVO) Limpa o horário
+        inputCidade.value = "";
+        inputUf.value = "";
+        preencherDataHoraAgora(); // sugere o horário atual para o próximo ponto
         inputDescricaoPonto.focus(); // Foca na descrição para o próximo ponto
     });
 
@@ -190,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentTrip.pontos.forEach(ponto => {
             const li = document.createElement('li');
-            
+
             let abastecimentoHtml = "";
             if (ponto.litros > 0 || ponto.valor > 0) {
                 abastecimentoHtml = `
@@ -200,8 +209,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
+            // Formata a data/hora do ponto (ISO -> "dd/mm HH:MM")
+            const dataFmt = new Date(ponto.datahora).toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit',
+                hour: '2-digit', minute: '2-digit'
+            });
+
+            // Cidade/UF, se informadas
+            const localFmt = ponto.cidade
+                ? ` — ${ponto.cidade}${ponto.uf ? '/' + ponto.uf : ''}`
+                : "";
+
             li.innerHTML = `
-                <strong>${ponto.descricao}</strong> (${ponto.horario})
+                <strong>${ponto.descricao}</strong> (${dataFmt})${localFmt}
                 <br>
                 ${ponto.km.toFixed(1)} km
                 ${abastecimentoHtml}

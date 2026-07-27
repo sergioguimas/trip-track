@@ -237,6 +237,13 @@ select:focus {
 /* Utilitário para esconder/mostrar */
 .hidden { display: none; }
 
+/* Data da viagem no card de histórico */
+.trip-data {
+    margin: -4px 0 12px;
+    color: var(--cor-texto-label);
+    font-size: 0.85rem;
+}
+
 /* Aviso não-bloqueante (ex.: ida não encontrada) */
 .aviso {
     background-color: rgba(249, 115, 22, 0.12);
